@@ -1,6 +1,8 @@
 import DroppingText from "../components/animations/DroppingText";
 import Loader from "../components/animations/Loader";
+import { useNavigate } from "react-router-dom";
 function Welcome() {
+  const navigate = useNavigate();
   return (
     <main className="relative flex min-h-screen items-center justify-center overflow-hidden bg-slate-950 px-6 text-white">
       <div className="absolute -left-24 -top-24 h-72 w-72 rounded-full bg-cyan-500/20 blur-3xl"></div>
@@ -28,6 +30,7 @@ function Welcome() {
         </p>
 
         <button
+          onClick={()=> navigate("/login")}
           type="button"
           className="mt-9 rounded-xl bg-cyan-400 px-8 py-3.5 font-semibold text-slate-950 transition duration-300 hover:-translate-y-1 hover:bg-cyan-300"
         >
