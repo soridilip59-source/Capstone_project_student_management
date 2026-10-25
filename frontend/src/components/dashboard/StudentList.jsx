@@ -1,8 +1,11 @@
-
-import { useState } from "react";
+import api from "../../services/api";
+import {useEffect, useState } from "react";
 
 function StudentList({ students }) {
   const [search, setSearch] = useState("");
+  const [studentsData, setStudentsData] = useState([]);
+const [loading, setLoading] = useState(true);
+const [error, setError] = useState("");
 
   const filteredStudents = students.filter((student) =>
     student.name.toLowerCase().includes(search.toLowerCase())
