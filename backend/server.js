@@ -5,6 +5,7 @@ import connectDatabase from "./config/db.js";
 import authRoutes from "./routes/authRoutes.js";
 import studentRoutes from "./routes/studentRoutes.js";
 import courseRoutes from "./routes/courseRoutes.js";
+import userRoutes from "./routes/userRoutes.js";
 import { errorHandler, notFound } from "./middleware/errorMiddleware.js";
 
 const requiredEnvironment = ["MONGODB_URI", "JWT_SECRET"];
@@ -34,6 +35,7 @@ app.get("/api/health", (req, res) => {
   res.json({ success: true, message: "API healthy" });
 });
 app.use("/api/auth", authRoutes);
+app.use("/api/users", userRoutes);
 app.use("/api/students", studentRoutes);
 app.use("/api/courses", courseRoutes);
 app.use(notFound);

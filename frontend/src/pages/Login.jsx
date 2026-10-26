@@ -1,10 +1,11 @@
 
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import Loader from "../components/animations/Loader";
 import api from "../services/api";
 
 function Login() {
-  const [email, setEmail] = useState("");
+  const [identifier, setIdentifier] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -15,19 +16,14 @@ function Login() {
     event.preventDefault();
     setError("");
 
-    if (!email.trim() || !password.trim()) {
-      setError("Please enter both email and password.");
-      return;
-    }
-
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      setError("Please enter a valid email address.");
+    if (!identifier.trim() || !password) {
+      setError("Please enter your username or email and password.");
       return;
     }
 
     setLoading(true);
     try {
-      const { data } = await api.post("/auth/login", { email, password });
+      const { data } = await api.post("/auth/login", { identifier, password });
       localStorage.setItem("token", data.token);
       localStorage.setItem("user", JSON.stringify(data.user));
       navigate("/dashboard", { replace: true });
@@ -49,18 +45,20 @@ function Login() {
           Login to your Student Management Platform
         </p>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} aria-busy={loading} className="space-y-4">
           <div>
-            <label htmlFor="email" className="mb-2 block text-sm">
-              Email address
+            <label htmlFor="identifier" className="mb-2 block text-sm">
+              Username or email
             </label>
 
             <input
-              id="email"
-              type="email"
-              value={email}
-              onChange={(event) => setEmail(event.target.value)}
-              placeholder="you@example.com"
+              id="identifier"
+              type="text"
+              value={identifier}
+              onChange={(event) => setIdentifier(event.target.value)}
+              placeholder="StudentAdmin or you@example.com"
+              autoComplete="username"
+              maxLength={254}
               className="w-full rounded-lg border border-slate-700 bg-slate-900 p-3 outline-none focus:border-cyan-400"
               required
             />
@@ -91,17 +89,20 @@ function Login() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full rounded-lg bg-cyan-400 p-3 font-semibold text-slate-950 transition hover:bg-cyan-300"
+            className="flex w-full items-center justify-center gap-2 rounded-lg bg-cyan-400 p-3 font-semibold text-slate-950 transition hover:bg-cyan-300 disabled:cursor-wait disabled:opacity-80"
           >
-            {loading ? "Logging in..." : "Login"}
+            <span aria-live="polite">{loading ? "Logging in..." : "Login"}</span>
           </button>
+
+          {loading && (
+            <div role="status" aria-label="Logging in">
+              <Loader />
+            </div>
+          )}
         </form>
 
         <p className="mt-5 text-sm text-slate-400">
-          New here?{" "}
-          <Link to="/register" className="text-cyan-400 hover:underline">
-            Create an account
-          </Link>
+          Need an account? Ask your administrator to create one.
         </p>
 
         <Link

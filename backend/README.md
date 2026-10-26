@@ -15,7 +15,17 @@ npm install
 Copy-Item .env.example .env
 ```
 
-Set `MONGODB_URI` and a long, private `JWT_SECRET` in `.env`. Keep `.env` out of source control. Set `CLIENT_ORIGIN` to the frontend origin; multiple origins can be comma-separated.
+Set `MONGODB_URI`, a random `JWT_SECRET` of at least 32 characters, and the `ADMIN_USERNAME`, `ADMIN_EMAIL`, and unique `ADMIN_PASSWORD` values in `.env`. The default administrator username in the example is `StudentAdmin`. Admin passwords must be 12-72 characters. Keep `.env` out of source control.
+
+Create the initial administrator once:
+
+```powershell
+npm run seed:admin
+```
+
+The seed command creates an administrator or adds the configured username to the matching existing administrator. It does not reset an existing admin password. Keep any old `.env` values secret and do not commit the file.
+
+For deployment, configure these variables in the hosting provider instead of uploading `.env`: use `NODE_ENV=production`, the production MongoDB URI, a strong random JWT secret, and the exact HTTPS frontend origin in `CLIENT_ORIGIN`. Configure the same admin seed variables securely and run `npm run seed:admin` once against the production database before opening the app. Do not run the seed command on every application start.
 
 ## Run
 
@@ -27,7 +37,7 @@ The API listens on `http://localhost:5000` by default. Confirm startup at `http:
 
 ## Authentication and access
 
-Register with `POST /api/auth/register` using `{ "name", "email", "password" }`. The first account is an administrator; later accounts are staff. Login with `POST /api/auth/login`. Both return a JWT and user object. Send the token as `Authorization: Bearer <token>`.
+Public registration is disabled. The administrator signs in using the configured username or email and password. Administrators create staff accounts in the dashboard; users can then sign in with either their username or email and password. `POST /api/auth/register` returns `403`. Login with `POST /api/auth/login` using `{ "identifier", "password" }`; it returns a JWT and user object. Send the token as `Authorization: Bearer <token>`.
 
 Authenticated users can read student/course data. Only administrators can create, update, or delete records.
 
@@ -36,9 +46,10 @@ Authenticated users can read student/course data. Only administrators can create
 | Method | Endpoint | Access | Purpose |
 | --- | --- | --- | --- |
 | GET | `/api/health` | Public | Health check |
-| POST | `/api/auth/register` | Public | Register an account |
+| POST | `/api/auth/register` | Disabled | Public signup is disabled |
 | POST | `/api/auth/login` | Public | Login |
 | GET | `/api/auth/me` | Authenticated | Current user |
+| GET/POST | `/api/users` | Admin | List users and create staff accounts |
 | GET | `/api/students?page=1&limit=10&search=name&status=Active` | Authenticated | Search and paginate students |
 | GET | `/api/students/stats` | Authenticated | Student totals |
 | GET/POST | `/api/students`, `/api/students/:id` | Read: authenticated; write: admin | Student CRUD |

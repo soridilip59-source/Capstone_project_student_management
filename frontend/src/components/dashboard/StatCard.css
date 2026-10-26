@@ -1,0 +1,114 @@
+.stat-card {
+  position: relative;
+  width: 100%;
+  max-width: 350px;
+  height: 280px;
+  margin: 0 auto;
+  border: 1px solid rgb(255 255 255 / 10%);
+  border-radius: 15px;
+  background: rgb(255 255 255 / 5%);
+  box-shadow: 0 15px 40px rgb(0 0 0 / 20%);
+  color: #fff;
+}
+
+.stat-card__face {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 15px;
+}
+
+.stat-card__face--details {
+  box-sizing: border-box;
+  padding: 24px;
+}
+
+.stat-card__content h2 {
+  margin: 0;
+  color: #f8fafc;
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+
+.stat-card__content p {
+  margin: 12px 0 0;
+  color: #94a3b8;
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+.stat-card__face--value {
+  overflow: hidden;
+  background: linear-gradient(135deg, #164e63, #0f172a);
+  transition: height 0.5s ease, border-radius 0.5s ease;
+}
+
+.stat-card:nth-child(2) .stat-card__face--value {
+  background: linear-gradient(135deg, #155e75, #111827);
+}
+
+.stat-card:nth-child(3) .stat-card__face--value {
+  background: linear-gradient(135deg, #164e63, #1e293b);
+}
+
+.stat-card__face--value::before {
+  position: absolute;
+  inset: 0 50% 0 0;
+  border-radius: 15px 0 0 15px;
+  background: rgb(255 255 255 / 10%);
+  content: "";
+  pointer-events: none;
+}
+
+.stat-card__face--value h2 {
+  position: relative;
+  margin: 0;
+  overflow: hidden;
+  max-width: 100%;
+  padding: 0 16px;
+  color: #fff;
+  font-size: clamp(4rem, 10vw, 7rem);
+  font-weight: 700;
+  text-overflow: ellipsis;
+  transition: font-size 0.5s ease;
+  white-space: nowrap;
+  text-shadow: 0 2px 5px rgb(0 0 0 / 20%);
+}
+
+.stat-card:hover .stat-card__face--value,
+.stat-card:focus-visible .stat-card__face--value {
+  top: auto;
+  height: 60px;
+  border-radius: 0 0 15px 15px;
+}
+
+.stat-card:hover .stat-card__face--value h2,
+.stat-card:focus-visible .stat-card__face--value h2 {
+  font-size: 2rem;
+}
+
+.stat-card:focus-visible {
+  outline: 3px solid #22d3ee;
+  outline-offset: 4px;
+}
+
+@media (hover: none) {
+  .stat-card__face--value {
+    top: auto;
+    height: 60px;
+    border-radius: 0 0 15px 15px;
+  }
+
+  .stat-card__face--value h2 {
+    font-size: 2rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .stat-card__face--value,
+  .stat-card__face--value h2 {
+    transition: none;
+  }
+}

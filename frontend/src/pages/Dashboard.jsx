@@ -3,6 +3,7 @@ import { useCallback, useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import StatCard from "../components/dashboard/StatCard";
 import StudentList from "../components/dashboard/StudentList";
+import AdminUserManager from "../components/dashboard/AdminUserManager";
 import api from "../services/api";
 
 function Dashboard() {
@@ -60,7 +61,7 @@ function Dashboard() {
           </h1>
 
           <p className="mt-2 text-slate-400">
-            Overview of student activity · Signed in as {user.name || user.email || "user"}
+            Overview of student activity · Signed in as {user.username || user.email || "user"}
           </p>
         </div>
 
@@ -97,6 +98,8 @@ function Dashboard() {
           />
         ))}
       </section>
+
+      {user.role === "admin" && <AdminUserManager />}
 
       <StudentList role={user.role} onStudentsChanged={loadStats} />
     </main>

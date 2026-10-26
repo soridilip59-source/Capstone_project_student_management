@@ -1,5 +1,4 @@
 import DroppingText from "../components/animations/DroppingText";
-import Loader from "../components/animations/Loader";
 import { useNavigate } from "react-router-dom";
 function Welcome() {
   const navigate = useNavigate();
@@ -36,10 +35,6 @@ function Welcome() {
         >
           Get Started
         </button>
-
-        <div className="mt-8">
-          <Loader />
-        </div>
 
         <p className="mt-6 text-sm text-slate-500">
           Built with React and Tailwind CSS

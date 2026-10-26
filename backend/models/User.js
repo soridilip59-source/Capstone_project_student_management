@@ -9,6 +9,15 @@ const userSchema = new mongoose.Schema(
       minlength: 2,
       maxlength: 80,
     },
+    username: {
+      type: String,
+      required: true,
+      lowercase: true,
+      trim: true,
+      minlength: 3,
+      maxlength: 30,
+      match: /^[a-z0-9._-]+$/,
+    },
     email: {
       type: String,
       required: true,
@@ -31,6 +40,10 @@ const userSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
+userSchema.index(
+  { username: 1 },
+  { unique: true, partialFilterExpression: { username: { $type: "string" } } }
+);
 userSchema.index(
   { role: 1 },
   { unique: true, partialFilterExpression: { role: "admin" } }

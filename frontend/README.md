@@ -12,6 +12,6 @@
    npm run dev
    ```
 
-The frontend uses `http://localhost:5000/api` by default. Set `VITE_API_URL` to override it. Create the first account from the Register page; the first account becomes the administrator. Administrators can create, edit, and delete students; staff can view and search records.
+The frontend uses `http://localhost:5000/api` by default. Copy `.env.example` to `.env.local` for local configuration, or set `VITE_API_URL` in the hosting provider to the deployed API URL (including `/api`). Vite embeds this value at build time, so rebuild after changing it. Public signup is disabled: seed the administrator from the backend instructions, then sign in with username or email. Administrators can create staff accounts and manage student records; staff can log in with username or email and view/search records.
 
 Run `npm run build` to create the production frontend build and `npm run lint` to check the React application.

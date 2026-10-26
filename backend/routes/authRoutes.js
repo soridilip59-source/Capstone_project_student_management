@@ -18,68 +18,32 @@ function userResponse(user) {
   return {
     id: user._id,
     name: user.name,
+    username: user.username,
     email: user.email,
     role: user.role,
   };
 }
 
 router.post("/register", async (req, res) => {
-  const { name, email, password } = req.body;
-
-  if (
-    typeof name !== "string" ||
-    name.trim().length < 2 ||
-    name.trim().length > 80 ||
-    typeof email !== "string" ||
-    !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim()) ||
-    typeof password !== "string" ||
-    password.length < 8
-  ) {
-    return res.status(400).json({
-      message: "Enter a valid name, email, and password of at least 8 characters.",
-    });
-  }
-
-  const normalizedEmail = email.trim().toLowerCase();
-  const existingUser = await User.exists({ email: normalizedEmail });
-
-  if (existingUser) {
-    return res.status(409).json({ message: "An account with this email already exists." });
-  }
-
-  const role = (await User.countDocuments()) === 0 ? "admin" : "staff";
-  const hashedPassword = await bcrypt.hash(password, 12);
-  const userDetails = {
-    name: name.trim(),
-    email: normalizedEmail,
-    password: hashedPassword,
-    role,
-  };
-  let user;
-
-  try {
-    user = await User.create(userDetails);
-  } catch (error) {
-    if (role !== "admin" || error.code !== 11000 || !error.keyPattern?.role) {
-      throw error;
-    }
-    user = await User.create({ ...userDetails, role: "staff" });
-  }
-
-  return res.status(201).json({
-    token: createToken(user),
-    user: userResponse(user),
+  return res.status(403).json({
+    message: "Public registration is disabled. Ask an administrator to create your account.",
   });
 });
 
 router.post("/login", async (req, res) => {
-  const { email, password } = req.body;
+  const { identifier, password } = req.body;
 
-  if (typeof email !== "string" || typeof password !== "string") {
-    return res.status(400).json({ message: "Email and password are required." });
+  if (typeof identifier !== "string" || typeof password !== "string") {
+    return res.status(400).json({ message: "Username or email and password are required." });
   }
 
-  const user = await User.findOne({ email: email.trim().toLowerCase() }).select("+password");
+  const normalizedIdentifier = identifier.trim().toLowerCase();
+  const user = await User.findOne({
+    $or: [
+      { email: normalizedIdentifier },
+      { username: normalizedIdentifier },
+    ],
+  }).select("+password");
   const passwordMatches = user && await bcrypt.compare(password, user.password);
 
   if (!passwordMatches) {
