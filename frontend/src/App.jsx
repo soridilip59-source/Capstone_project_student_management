@@ -3,11 +3,17 @@ import {
   BrowserRouter,
   Routes,
   Route,
+  Navigate,
 } from "react-router-dom";
 
 import Welcome from "./pages/Welcome";
 import Login from "./pages/Login";
+import Register from "./pages/Register";
 import Dashboard from "./pages/Dashboard";
+
+function ProtectedRoute({ children }) {
+  return localStorage.getItem("token") ? children : <Navigate to="/login" replace />;
+}
 
 function App() {
   return (
@@ -15,9 +21,14 @@ function App() {
       <Routes>
         <Route path="/" element={<Welcome />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
         <Route
           path="/dashboard"
-          element={<Dashboard />}
+          element={
+            <ProtectedRoute>
+              <Dashboard />
+            </ProtectedRoute>
+          }
         />
       </Routes>
     </BrowserRouter>

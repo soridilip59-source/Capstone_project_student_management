@@ -1,15 +1,17 @@
 
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import api from "../services/api";
 
 function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
 
-  function handleSubmit(event) {
+  async function handleSubmit(event) {
     event.preventDefault();
     setError("");
 
@@ -23,8 +25,17 @@ function Login() {
       return;
     }
 
-    // Demo only — no real authentication yet.
-    navigate("/dashboard");
+    setLoading(true);
+    try {
+      const { data } = await api.post("/auth/login", { email, password });
+      localStorage.setItem("token", data.token);
+      localStorage.setItem("user", JSON.stringify(data.user));
+      navigate("/dashboard", { replace: true });
+    } catch (requestError) {
+      setError(requestError.response?.data?.message || "Unable to connect to the server.");
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
@@ -79,11 +90,19 @@ function Login() {
 
           <button
             type="submit"
+            disabled={loading}
             className="w-full rounded-lg bg-cyan-400 p-3 font-semibold text-slate-950 transition hover:bg-cyan-300"
           >
-            Login
+            {loading ? "Logging in..." : "Login"}
           </button>
         </form>
+
+        <p className="mt-5 text-sm text-slate-400">
+          New here?{" "}
+          <Link to="/register" className="text-cyan-400 hover:underline">
+            Create an account
+          </Link>
+        </p>
 
         <Link
           to="/"
