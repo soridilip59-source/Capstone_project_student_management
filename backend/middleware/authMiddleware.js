@@ -13,7 +13,7 @@ export async function protect(req, res, next) {
 
   try {
     const payload = jwt.verify(token, process.env.JWT_SECRET);
-    const user = await User.findById(payload.sub).select("name email role");
+    const user = await User.findById(payload.sub).select("name username email role");
 
     if (!user) {
       return res.status(401).json({ message: "User account no longer exists." });
